@@ -28,13 +28,14 @@ robotpy_extras = [
 # Other pip packages to install
 requires = ["photonlibpy==2024.2.4"]
 [tool.poetry]
+# package-install=false
 name = "frc2024-main"
 version = "0.1.0"
 description = ""
 authors = ["te <thrzl@icloud.com>"]
 license = "MIT"
 readme = "README.md"
-packages = [{include = "frc2024_main"}]
+packages = []
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.13"
