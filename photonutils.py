@@ -10,7 +10,6 @@ from math import tan
 
 
 class PhotonUtils:
-
     @classmethod
     def calculateDisanceToTargetMeters(
         cls,

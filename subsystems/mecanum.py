@@ -3,12 +3,14 @@ from rev import CANSparkMax, SparkRelativeEncoder
 from wpilib import MotorControllerGroup
 from wpilib.drive import MecanumDrive
 
+
 class EncoderGroup:
     __slots__ = ("front", "rear")
 
     def __init__(self, front: CANSparkMax, rear: CANSparkMax):
         self.front: SparkRelativeEncoder = front.getEncoder()
         self.rear: SparkRelativeEncoder = rear.getEncoder()
+
 
 class Mecanum(Subsystem):
     def __init__(self):

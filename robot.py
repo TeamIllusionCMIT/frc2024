@@ -40,6 +40,7 @@ def cap(num: float, threshold: float):
     """returns a number or a maximum value."""
     return threshold * num
 
+
 class Ghost(TimedRobot):
     __slots__ = (
         "factor",
@@ -184,9 +185,13 @@ class Ghost(TimedRobot):
                 self.drivetrain.setMaxOutput(1)
                 self.drivetrain.driveCartesian(
                     # self.limiter.calculate(-self.controller.getLeftY()),
-                    -self.controller.getLeftY() * self.factor if abs(self.controller.getLeftY()) > 0.075 else 0,
+                    -self.controller.getLeftY() * self.factor
+                    if abs(self.controller.getLeftY()) > 0.075
+                    else 0,
                     # self.limiter.calculate(self.controller.getLeftX()),
-                    self.controller.getLeftX() * self.factor if abs(self.controller.getLeftX()) > 0.075 else 0,
+                    self.controller.getLeftX() * self.factor
+                    if abs(self.controller.getLeftX()) > 0.075
+                    else 0,
                     (self.controller.getRightX()),
                 )
         except Exception:

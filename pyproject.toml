@@ -20,7 +20,7 @@ robotpy_extras = [
     # "phoenix5"
     # "phoenix6",
     # "playingwithfusion"
-    "rev"
+    "rev",
     # "romi"
     # "sim"
 ]
@@ -28,7 +28,7 @@ robotpy_extras = [
 # Other pip packages to install
 requires = ["photonlibpy==2024.2.4"]
 [tool.poetry]
-# package-install=false
+package-mode = false
 name = "frc2024-main"
 version = "0.1.0"
 description = ""
@@ -39,7 +39,7 @@ packages = []
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.13"
-robotpy = {version="^2024.3.2.1", extras=["commands2", "rev", "navx"]}
+robotpy = { version = "^2024.3.2.1", extras = ["commands2", "rev", "navx"] }
 
 
 [tool.poetry.group.dev.dependencies]

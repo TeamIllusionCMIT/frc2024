@@ -3,6 +3,7 @@ from rev import CANSparkMax, SparkRelativeEncoder
 from wpilib import MotorControllerGroup
 from wpilib.drive import MecanumDrive
 
+
 class Shooter(Subsystem):
     def __init__(self):
         super().__init__()
@@ -18,7 +19,7 @@ class Shooter(Subsystem):
         shooter_left = CANSparkMax(10, CANSparkMax.MotorType.kBrushed)
         shooter_right = CANSparkMax(11, CANSparkMax.MotorType.kBrushless)
         shooter_right.setInverted(False)
-        
+
         shooter_left.setIdleMode(CANSparkMax.IdleMode.kBrake)
         shooter_right.setIdleMode(CANSparkMax.IdleMode.kBrake)
 
@@ -39,7 +40,6 @@ class Shooter(Subsystem):
         self.top_group = top_group
         self.bottom_group = bottom_group
         self.shooter_group = shooter_group
-
 
     def ingest(self):
         # print("Swallowing the whole note.")
