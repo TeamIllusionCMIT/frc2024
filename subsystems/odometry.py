@@ -56,7 +56,7 @@ class Odometry(Subsystem):
         dash = Shuffleboard.getTab("LiveWindow")
         # dash.add("odometry", self.odometry)
         dash.add("field", self.field)
-        dash.add("gyro", gyro)
+        dash.add("gyro", gyro.getAngle())
 
         self.update()
 
@@ -78,4 +78,4 @@ class Odometry(Subsystem):
         self.update()
 
     def get_pose(self) -> Pose2d:
-        self.odometry.getPose()
+        return self.odometry.getPose()
