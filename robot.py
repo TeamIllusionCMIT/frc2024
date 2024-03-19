@@ -46,7 +46,7 @@ class Ghost(TimedCommandRobot):
 
     def robotInit(self):
         self.autonomousCommand: Optional[Command] = None
-        self.subsystems = RobotContainer()
+        self.subsystems = RobotContainer(self.isSimulation())
 
         Preferences.initBoolean("auto_active", False)
         self.auto_active = Preferences.getBoolean("auto_active", False)

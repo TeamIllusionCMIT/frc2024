@@ -20,9 +20,12 @@ from enum import Enum, auto
 from navx import AHRS
 
 
-class DummyGyro:
+class DummyGyro: 
     def getRotation2d(self) -> Rotation2d:
         return Rotation2d(0, 0)
+    
+    def getAngle(self) -> float:
+        return 0
 
 
 class RobotContainer:
@@ -52,19 +55,22 @@ class RobotContainer:
     def select(self) -> CommandSelector:
         return self.CommandSelector.NONE
 
-    def __init__(self):
+    def __init__(self, is_fake: bool):
         """The container for the robot. Contains subsystems, OI devices, and commands."""
+        
+        if is_fake:
+            self.gyro = DummyGyro()
+        else:
+            self.gyro = AHRS.create_spi()  # ! since this breaks tests for some reason
 
-        self.gyro = AHRS.create_spi()  # ? or i2c?
-        # ! this breaks tests for some reason
-
-        # self.gyro = DummyGyro()  # ! comment this out when not testing
 
         # initialize the robot's subsystems
         self.vision = Vision("Global_Camera_Shutter")
         self.drivetrain = Mecanum()
         self.shooter = Shooter()
-        self.odometry = Odometry(self.gyro, self.drivetrain, self.vision)
+
+        # * so the linter doesn't get mad at me
+        self.odometry = Odometry(self.gyro, self.drivetrain, self.vision) # type: ignore
 
         # The driver's controller
         self.controller = XboxController(0)
