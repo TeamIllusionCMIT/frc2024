@@ -27,6 +27,7 @@ robotpy_extras = [
 
 # Other pip packages to install
 requires = ["photonlibpy==2024.2.4"]
+
 [tool.poetry]
 package-mode = false
 name = "frc2024-main"
@@ -40,11 +41,12 @@ packages = []
 [tool.poetry.dependencies]
 python = ">=3.8,<3.13"
 robotpy = { version = "^2024.3.2.1", extras = ["commands2", "rev", "navx"] }
-
-
-[tool.poetry.group.dev.dependencies]
+photonlibpy = "^2024.3.0"
 black = "^24.3.0"
 ruff = "^0.3.3"
+
+[tool.poetry.scripts]
+commit = "ruff check . && robotpy test && black ."
 
 [build-system]
 requires = ["poetry-core"]
