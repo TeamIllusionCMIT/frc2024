@@ -20,7 +20,7 @@ from enum import Enum, auto
 
 class DummyGyro:
     def getRotation2d(self) -> Rotation2d:
-        Rotation2d(0, 0)
+        return Rotation2d(0, 0)
 
 
 class RobotContainer:
