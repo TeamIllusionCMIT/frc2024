@@ -1,7 +1,6 @@
 from commands2.subsystem import Subsystem
-from rev import CANSparkMax, SparkRelativeEncoder
+from rev import CANSparkMax
 from wpilib import MotorControllerGroup
-from wpilib.drive import MecanumDrive
 
 
 class Shooter(Subsystem):
@@ -41,12 +40,33 @@ class Shooter(Subsystem):
         self.bottom_group = bottom_group
         self.shooter_group = shooter_group
 
-    def ingest(self):
+
+    def arm_intake(self):
         # print("Swallowing the whole note.")
         self.bottom_group.set(0.25)
         self.top_group.set(-0.25)
 
-    def throw(self):
+    def arm_spit(self):
         # print("Regurgitating the whole note.")
         self.bottom_group.set(-0.5)
         self.top_group.set(0.5)
+
+    def intake(self):
+        self.shooter_group.set(-0.5)
+
+    def shoot(self):
+        self.shooter_group.set(1)
+
+    def stop(self):
+        self.shooter_group.set(0)
+
+    def set(self, speed: float):
+        self.shooter_group.set(speed)
+        
+    def set_arm(self, speed: float):
+        self.bottom_group.set(speed)
+        self.top_group.set(-speed)
+
+    def arm_stop(self):
+        self.bottom_group.set(0)
+        self.top_group.set(0)
