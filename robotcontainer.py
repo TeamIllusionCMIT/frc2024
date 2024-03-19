@@ -6,10 +6,15 @@
 from wpilib import XboxController
 
 from commands2.button import CommandXboxController as Controller
-from commands2 import InstantCommand, Command, RunCommand
+from commands2 import InstantCommand, Command, RunCommand, SelectCommand, PrintCommand
 
 from subsystems.mecanum import Mecanum
 from subsystems.shooter import Shooter
+from subsystems.odometry import Odometry
+from subsystems.vision import Vision
+
+from enum import Enum, auto
+from navx import AHRS
 
 
 class RobotContainer:
@@ -18,17 +23,41 @@ class RobotContainer:
     "declarative" paradigm, very little robot logic should actually be handled in the :class:`.Robot`
     periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
     subsystems, commands, and button mappings) should be declared here.
-
     """
+
+    __slots__ = (
+        "drivetrain",
+        "shooter",
+        "gyro",
+        "vision",
+        "odometry",
+        "controller",
+        "select_command",
+    )
+    
+
+    class CommandSelector(Enum):
+        NONE = auto()
+        ONE = auto()
+        TWO = auto()
+        THREE = auto()
+
+    def select(self) -> CommandSelector:
+        return self.CommandSelector.NONE
 
     def __init__(self):
         """The container for the robot. Contains subsystems, OI devices, and commands."""
-        # The robot's subsystems
+        
+        self.gyro = AHRS.create_spi() # ? or i2c?
+
+        # initialize the robot's subsystems
+        self.vision = Vision()
         self.drivetrain = Mecanum()
         self.shooter = Shooter()
+        self.odometry = Odometry(self.gyro, self.drivetrain, self.vision)
 
         # The driver's controller
-        self.driverController = XboxController(0)
+        self.controller = XboxController(0)
 
         # Configure the button bindings
         self.configureButtonBindings()
@@ -38,13 +67,30 @@ class RobotContainer:
         self.drivetrain.setDefaultCommand(
             RunCommand(
                 lambda: self.drivetrain.drive(
-                    -self.driverController.getLeftY(),
-                    self.driverController.getLeftX(),
-                    -self.driverController.getRightX(),
+                    -self.controller.getLeftY(),
+                    self.controller.getLeftX(),
+                    -self.controller.getRightX(),
                 ),
                 self.drivetrain,
             )
         )
+
+        self.select_command = SelectCommand(
+            # Maps selector values to commands
+            {
+                self.CommandSelector.ONE: PrintCommand(
+                    "Command one was selected!"
+                ),
+                self.CommandSelector.TWO: PrintCommand(
+                    "Command two was selected!"
+                ),
+                self.CommandSelector.THREE: PrintCommand(
+                    "Command three was selected!"
+                ),
+            },
+            self.select,
+        )
+
 
     def configureButtonBindings(self):
         """
@@ -125,4 +171,4 @@ class RobotContainer:
 
         :returns: the command to run in autonomous
         """
-        return InstantCommand()
+        return self.select_command
