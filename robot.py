@@ -12,10 +12,8 @@ from logging import basicConfig, DEBUG, info
 from commands2.timedcommandrobot import TimedCommandRobot
 from wpimath.geometry import Translation2d
 from math import pi
+from navx import AHRS
 
-
-MOTOR_FREE_SPEED = 5676
-LINEAR_SPEED = ((2 * pi) * 7.5 * (MOTOR_FREE_SPEED / 60)) / 100  # in m/s
 ARM_CPR = 7  # arm motor counts per revolution
 
 
@@ -34,31 +32,13 @@ def cap(num: float, threshold: float):
 
 
 class Ghost(TimedCommandRobot):
-    __slots__ = ("camera", "auto_active", "arm_encoder", "subsystems")
+    __slots__ = ("camera", "auto_active", "arm_encoder", "subsystems", "gyro")
 
     def init_pid(self):
         # self.forward_pid = PIDController(0.1, 0.01, 0.05)
         self.drive_pid = PIDController(0.0025, 0, 0)
         self.arm_pid = PIDController(0.005, 0, 0)
         self.stop_pid = PIDController(0.1, 0.01, 0.05)
-
-    def init_kinematics(self):
-        # unfinished
-        kinematics = MecanumDriveKinematics(
-            frontLeftWheel=Translation2d().fromFeet(-1.7391667, 2 / 3),
-            frontRightWheel=Translation2d().fromFeet(1.7391667, 2 / 3),
-            rearLeftWheel=Translation2d().fromFeet(-1.7391667, -2 / 3),
-            rearRightWheel=Translation2d().fromFeet(1.7391667, -2 / 3),
-        )
-
-        # Example differential drive wheel speeds: 2 meters per second
-        # for the left side, 3 meters per second for the right side.
-        wheel_speeds = MecanumDriveWheelSpeeds(
-            LINEAR_SPEED, LINEAR_SPEED, LINEAR_SPEED, LINEAR_SPEED
-        )
-
-        # Convert to chassis speeds.
-        self.chassis_speeds = kinematics.toChassisSpeeds(wheel_speeds)
 
     def info(self, message: str):
         if (not DriverStation.isDSAttached()) or DriverStation.isFMSAttached():

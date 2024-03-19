@@ -1,7 +1,7 @@
 from commands2.subsystem import Subsystem
 from rev import CANSparkMax, SparkRelativeEncoder
 from wpilib.drive import MecanumDrive
-from navx import AHRS
+from wpimath.units import inchesToMeters
 
 
 class EncoderGroup:
@@ -13,7 +13,11 @@ class EncoderGroup:
 
 
 class Mecanum(Subsystem):
-    __slots__ = ("inversion_factor", "arm", "drivetrain" "gyro")
+    REV_CPR = 42
+    WHEEL_CIRCUMFERENCE = inchesToMeters(3.5)
+
+
+    __slots__ = ("inversion_factor", "arm", "drivetrain" "gyro", "left_front", "right_front", "left_rear", "right_rear")
 
     def deadzone(self, value: float, deadzone: float = 0.075):
         """
@@ -31,35 +35,39 @@ class Mecanum(Subsystem):
 
         self.inversion_factor = 1  # start off not inveretd
 
-        left_rear = CANSparkMax(1, CANSparkMax.MotorType.kBrushless)
-        right_rear = CANSparkMax(2, CANSparkMax.MotorType.kBrushless)
+        self.left_rear = CANSparkMax(1, CANSparkMax.MotorType.kBrushless)
+        self.right_rear = CANSparkMax(2, CANSparkMax.MotorType.kBrushless)
 
-        right_front = CANSparkMax(3, CANSparkMax.MotorType.kBrushless)
-        left_front = CANSparkMax(4, CANSparkMax.MotorType.kBrushless)
+        self.right_front = CANSparkMax(3, CANSparkMax.MotorType.kBrushless)
+        self.left_front = CANSparkMax(4, CANSparkMax.MotorType.kBrushless)
 
         """make them all brake when you let go of the stick"""
-        left_front.setIdleMode(CANSparkMax.IdleMode.kBrake)
-        left_rear.setIdleMode(CANSparkMax.IdleMode.kBrake)
+        self.left_front.setIdleMode(CANSparkMax.IdleMode.kBrake)
+        self.left_rear.setIdleMode(CANSparkMax.IdleMode.kBrake)
 
-        right_front.setIdleMode(CANSparkMax.IdleMode.kBrake)
-        right_rear.setIdleMode(CANSparkMax.IdleMode.kBrake)
+        self.right_front.setIdleMode(CANSparkMax.IdleMode.kBrake)
+        self.right_rear.setIdleMode(CANSparkMax.IdleMode.kBrake)
 
         """invert some of the motors (they just have to be like that)"""
-        right_front.setInverted(True)
-        right_rear.setInverted(True)
+        self.right_front.setInverted(True)
+        self.right_rear.setInverted(True)
 
-        left_front.setSmartCurrentLimit(40)
-        right_front.setSmartCurrentLimit(40)
-        left_rear.setSmartCurrentLimit(40)
-        right_rear.setSmartCurrentLimit(40)
+        self.left_front.setSmartCurrentLimit(40)
+        self.right_front.setSmartCurrentLimit(40)
+        self.left_rear.setSmartCurrentLimit(40)
+        self.right_rear.setSmartCurrentLimit(40)
+
+        self.left_front.getEncoder().setPositionConversionFactor(self.REV_CPR / self.WHEEL_CIRCUMFERENCE)
+        self.right_front.getEncoder().setPositionConversionFactor(self.REV_CPR / self.WHEEL_CIRCUMFERENCE)
+        self.left_rear.getEncoder().setPositionConversionFactor(self.REV_CPR / self.WHEEL_CIRCUMFERENCE)
+        self.right_rear.getEncoder().setPositionConversionFactor(self.REV_CPR / self.WHEEL_CIRCUMFERENCE)
+        
 
         """tell it how we want to drive"""
-        self.drivetrain = MecanumDrive(left_front, left_rear, right_front, right_rear)
+        self.drivetrain = MecanumDrive(self.left_front, self.left_rear, self.right_front, self.right_rear)
         self.drivetrain.setExpiration(0.1)
 
         self.drivetrain.setMaxOutput(max_output)
-
-        self.gyro = AHRS.create_spi()  # ? or is it i2c?
 
     def invert(self):
         """invert the drivetrain (for when aiming to shoot, since the shooter is in the back)"""
