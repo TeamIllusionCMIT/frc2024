@@ -1,4 +1,3 @@
-from typing import Optional
 from commands2.subsystem import Subsystem
 from photonlibpy.photonCamera import PhotonCamera
 from photonlibpy.photonTrackedTarget import PhotonTrackedTarget
