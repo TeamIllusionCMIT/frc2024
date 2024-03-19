@@ -23,11 +23,8 @@ class Mecanum(Subsystem):
     __slots__ = (
         "inversion_factor",
         "arm",
-        "drivetrain" "gyro",
-        "left_front",
-        "right_front",
-        "left_rear",
-        "right_rear",
+        "drivetrain",
+        "gyro",
         "left_encoders",
         "right_encoders",
     )
@@ -48,30 +45,30 @@ class Mecanum(Subsystem):
 
         self.inversion_factor = 1  # start off not inveretd
 
-        self.left_rear = CANSparkMax(1, CANSparkMax.MotorType.kBrushless)
-        self.right_rear = CANSparkMax(2, CANSparkMax.MotorType.kBrushless)
+        left_rear = CANSparkMax(1, CANSparkMax.MotorType.kBrushless)
+        right_rear = CANSparkMax(2, CANSparkMax.MotorType.kBrushless)
 
-        self.right_front = CANSparkMax(3, CANSparkMax.MotorType.kBrushless)
-        self.left_front = CANSparkMax(4, CANSparkMax.MotorType.kBrushless)
+        right_front = CANSparkMax(3, CANSparkMax.MotorType.kBrushless)
+        left_front = CANSparkMax(4, CANSparkMax.MotorType.kBrushless)
 
         """make them all brake when you let go of the stick"""
-        self.left_front.setIdleMode(CANSparkMax.IdleMode.kBrake)
-        self.left_rear.setIdleMode(CANSparkMax.IdleMode.kBrake)
+        left_front.setIdleMode(CANSparkMax.IdleMode.kBrake)
+        left_rear.setIdleMode(CANSparkMax.IdleMode.kBrake)
 
-        self.right_front.setIdleMode(CANSparkMax.IdleMode.kBrake)
-        self.right_rear.setIdleMode(CANSparkMax.IdleMode.kBrake)
+        right_front.setIdleMode(CANSparkMax.IdleMode.kBrake)
+        right_rear.setIdleMode(CANSparkMax.IdleMode.kBrake)
 
         """invert some of the motors (they just have to be like that)"""
-        self.right_front.setInverted(True)
-        self.right_rear.setInverted(True)
+        right_front.setInverted(True)
+        right_rear.setInverted(True)
 
-        self.left_front.setSmartCurrentLimit(40)
-        self.right_front.setSmartCurrentLimit(40)
-        self.left_rear.setSmartCurrentLimit(40)
-        self.right_rear.setSmartCurrentLimit(40)
+        left_front.setSmartCurrentLimit(40)
+        right_front.setSmartCurrentLimit(40)
+        left_rear.setSmartCurrentLimit(40)
+        right_rear.setSmartCurrentLimit(40)
 
-        self.left_encoders = EncoderGroup(self.left_front, self.left_rear)
-        self.right_encoders = EncoderGroup(self.right_front, self.right_rear)
+        self.left_encoders = EncoderGroup(left_front, left_rear)
+        self.right_encoders = EncoderGroup(right_front, right_rear)
 
         self.left_encoders.set_conversion_factor(
             self.REV_CPR / self.WHEEL_CIRCUMFERENCE
@@ -82,7 +79,7 @@ class Mecanum(Subsystem):
 
         """tell it how we want to drive"""
         self.drivetrain = MecanumDrive(
-            self.left_front, self.left_rear, self.right_front, self.right_rear
+            left_front, left_rear, right_front, right_rear
         )
         self.drivetrain.setExpiration(0.1)
 
