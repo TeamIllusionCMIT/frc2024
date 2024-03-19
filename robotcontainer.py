@@ -13,10 +13,14 @@ from subsystems.shooter import Shooter
 from subsystems.odometry import Odometry
 from subsystems.vision import Vision
 
+from wpimath.geometry import Rotation2d
+
 from enum import Enum, auto
 from navx import AHRS
 
-
+class DummyGyro:
+    def getRotation2d(self) -> Rotation2d:
+        Rotation2d(0,0)
 class RobotContainer:
     """
     This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -34,7 +38,6 @@ class RobotContainer:
         "controller",
         "select_command",
     )
-    
 
     class CommandSelector(Enum):
         NONE = auto()
@@ -47,11 +50,15 @@ class RobotContainer:
 
     def __init__(self):
         """The container for the robot. Contains subsystems, OI devices, and commands."""
-        
-        self.gyro = AHRS.create_spi() # ? or i2c?
+
+
+        # self.gyro = AHRS.create_i2c()  # ? or i2c?
+        # ! this breaks tests for some reason
+
+        self.gyro = DummyGyro() # ! comment this out when not testing
 
         # initialize the robot's subsystems
-        self.vision = Vision()
+        self.vision = Vision("Global_Camera_Shutter")
         self.drivetrain = Mecanum()
         self.shooter = Shooter()
         self.odometry = Odometry(self.gyro, self.drivetrain, self.vision)
@@ -78,19 +85,12 @@ class RobotContainer:
         self.select_command = SelectCommand(
             # Maps selector values to commands
             {
-                self.CommandSelector.ONE: PrintCommand(
-                    "Command one was selected!"
-                ),
-                self.CommandSelector.TWO: PrintCommand(
-                    "Command two was selected!"
-                ),
-                self.CommandSelector.THREE: PrintCommand(
-                    "Command three was selected!"
-                ),
+                self.CommandSelector.ONE: PrintCommand("Command one was selected!"),
+                self.CommandSelector.TWO: PrintCommand("Command two was selected!"),
+                self.CommandSelector.THREE: PrintCommand("Command three was selected!"),
             },
             self.select,
         )
-
 
     def configureButtonBindings(self):
         """
