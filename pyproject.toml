@@ -44,10 +44,14 @@ robotpy = { version = "^2024.3.2.1", extras = ["commands2", "rev", "navx"] }
 photonlibpy = "^2024.3.0"
 black = "^24.3.0"
 ruff = "^0.3.3"
+poethepoet = "^0.25.0"
 
-[tool.poetry.scripts]
-commit = "ruff check . && robotpy test && black ."
+[tool.poe.tasks]
+format = "black ."
+lint = "ruff check ."
+test = "robotpy test"
 deploy = "robotpy deploy --skip-tests"
+precommit.shell = "black . && ruff check ."
 
 [build-system]
 requires = ["poetry-core"]
