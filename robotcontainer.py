@@ -55,7 +55,7 @@ class RobotContainer:
     def __init__(self):
         """The container for the robot. Contains subsystems, OI devices, and commands."""
 
-        self.gyro = AHRS.create_i2c()  # ? or i2c?
+        self.gyro = AHRS.create_spi()  # ? or i2c?
         # ! this breaks tests for some reason
 
         # self.gyro = DummyGyro()  # ! comment this out when not testing
