@@ -17,6 +17,8 @@ from wpimath.geometry import Rotation2d
 
 from enum import Enum, auto
 
+from navx import AHRS
+
 
 class DummyGyro:
     def getRotation2d(self) -> Rotation2d:
@@ -53,10 +55,10 @@ class RobotContainer:
     def __init__(self):
         """The container for the robot. Contains subsystems, OI devices, and commands."""
 
-        # self.gyro = AHRS.create_i2c()  # ? or i2c?
+        self.gyro = AHRS.create_i2c()  # ? or i2c?
         # ! this breaks tests for some reason
 
-        self.gyro = DummyGyro()  # ! comment this out when not testing
+        # self.gyro = DummyGyro()  # ! comment this out when not testing
 
         # initialize the robot's subsystems
         self.vision = Vision("Global_Camera_Shutter")
@@ -77,7 +79,7 @@ class RobotContainer:
                 lambda: self.drivetrain.drive(
                     -self.controller.getLeftY(),
                     self.controller.getLeftX(),
-                    -self.controller.getRightX(),
+                    self.controller.getRightX(),
                 ),
                 self.drivetrain,
             )
