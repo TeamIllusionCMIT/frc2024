@@ -6,7 +6,7 @@ from wpimath.kinematics import (
     MecanumDriveWheelPositions,
 )
 from wpimath.geometry import Translation2d, Rotation2d, Pose2d
-from wpilib import Field2d
+from wpilib import Field2d, Timer
 from wpilib.shuffleboard import Shuffleboard
 
 from math import pi
@@ -21,6 +21,7 @@ class Odometry(Subsystem):
     LINEAR_SPEED = ((2 * pi) * 7.5 * (MOTOR_FREE_SPEED / 60)) / 100  # in m/s
 
     def __init__(self, gyro: AHRS, drivetrain: Mecanum, vision: Vision):
+        self.timer = Timer()
         self.drivetrain = drivetrain
 
         self.kinematics = MecanumDriveKinematics(
@@ -31,10 +32,6 @@ class Odometry(Subsystem):
         )
 
         self.wheel_positions = MecanumDriveWheelPositions()
-        self.wheel_positions.frontLeft = drivetrain.left_encoders.front.getPosition()
-        self.wheel_positions.rearRight = drivetrain.right_encoders.rear.getPosition()
-        self.wheel_positions.frontRight = drivetrain.right_encoders.front.getPosition()
-        self.wheel_positions.rearLeft = drivetrain.left_encoders.rear.getPosition()
 
         # Example differential drive wheel speeds: 2 meters per second
         # for the left side, 3 meters per second for the right side.
@@ -59,8 +56,31 @@ class Odometry(Subsystem):
         dash.add("gyro", gyro.getAngle())
 
         self.update()
+        self.timer.start()
+        self.vision = vision
 
     def update(self):
+        self.odometry.update(self.gyro.getRotation2d(), self.update_wheel_positions())
+        self.field.setRobotPose(self.odometry.getPose())
+
+    def periodic(self):
+        if self.timer.advanceIfElapsed(1):
+            estimated_pose = self.vision.estimate_pose()
+            if estimated_pose: # * if we have a pose estimation from photonvision...
+                pose = estimated_pose.toPose2d()
+                self.odometry.resetPosition( # *
+                    pose.rotation(), # * current true rotation
+                    self.update_wheel_positions(), # * current wheel positions
+                    pose, # * current true position
+                )
+                self.field.setRobotPose(pose)
+                return # * don't update the odometry if we have a better estimate
+        self.update()
+
+    def get_pose(self) -> Pose2d:
+        return self.odometry.getPose()
+
+    def update_wheel_positions(self) -> MecanumDriveWheelPositions:
         self.wheel_positions.frontLeft = (
             self.drivetrain.left_encoders.front.getPosition()
         )
@@ -71,11 +91,4 @@ class Odometry(Subsystem):
             self.drivetrain.right_encoders.front.getPosition()
         )
         self.wheel_positions.rearLeft = self.drivetrain.left_encoders.rear.getPosition()
-        self.odometry.update(self.gyro.getRotation2d(), self.wheel_positions)
-        self.field.setRobotPose(self.odometry.getPose())
-
-    def periodic(self):
-        self.update()
-
-    def get_pose(self) -> Pose2d:
-        return self.odometry.getPose()
+        return self.wheel_positions

@@ -1,7 +1,8 @@
+from typing import Optional
 from commands2.subsystem import Subsystem
-from photonlibpy.photonCamera import PhotonCamera
+from photonlibpy.photonCamera import PhotonCamera, PhotonPipelineResult
 from photonlibpy.photonTrackedTarget import PhotonTrackedTarget
-from photonlibpy.photonPoseEstimator import PhotonPoseEstimator, PoseStrategy
+from photonlibpy.photonPoseEstimator import PhotonPoseEstimator, PoseStrategy, EstimatedRobotPose
 from wpimath.geometry import Transform3d, Pose3d
 from robotpy_apriltag import AprilTagFieldLayout, AprilTagField
 
@@ -37,8 +38,22 @@ class Vision(Subsystem):
             self.driver_mode = False
 
         # gets the current best target
-        targets = self.camera.getLatestResult().getTargets()
+        targets = self.latest_result().getTargets()
         return targets[0]
 
         # self.drive_pid = PhotonPIDController(0.1, 0, 0)
         # self.forward_pid = PhotonPIDController(0.1, 0, 0)
+
+    def latest_result(self) -> PhotonPipelineResult:
+        if self.driver_mode:
+            self.driver_mode = False
+
+        return self.camera.getLatestResult()
+
+    def estimate_pose(self) -> Optional[Pose3d]:
+        if self.driver_mode:
+            self.driver_mode = False
+
+        # gets the current best target
+        pose_result = self.pose_estimator.update(self.latest_result())
+        return pose_result.estimatedPose if pose_result else None
