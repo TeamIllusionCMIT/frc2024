@@ -19,8 +19,23 @@ class Vision(Subsystem):
             self.camera,
             Transform3d(Pose3d(), Pose3d()),
         )  # TODO: make this actually work
+        
+        # * less computation, the computer gets to chill
+        # * also gives streams higher fps
+        self.driver_mode = True 
+
+    @property
+    def driver_mode(self) -> bool:
+        return self.camera.getDriverMode()
+    
+    @driver_mode.setter
+    def driver_mode(self, enable: bool) -> None:
+        self.camera.setDriverMode(enable)
 
     def best_target(self) -> PhotonTrackedTarget:
+        if self.driver_mode:
+            self.driver_mode = False
+
         # gets the current best target
         targets = self.camera.getLatestResult().getTargets()
         return targets[0]
