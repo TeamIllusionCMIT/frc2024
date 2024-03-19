@@ -57,7 +57,6 @@ class Odometry(Subsystem):
         # dash.add("odometry", self.odometry)
         dash.add("field", self.field)
         dash.add("gyro", gyro)
-        
 
         self.update()
 

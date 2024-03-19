@@ -1,3 +1,4 @@
+from typing import Optional
 from commands2.subsystem import Subsystem
 from photonlibpy.photonCamera import PhotonCamera
 from photonlibpy.photonTrackedTarget import PhotonTrackedTarget
@@ -23,7 +24,7 @@ class Vision(Subsystem):
     def best_target(self) -> PhotonTrackedTarget:
         # gets the current best target
         targets = self.camera.getLatestResult().getTargets()
-        return targets[0].getBestCameraToTarget
+        return targets[0]
 
         # self.drive_pid = PhotonPIDController(0.1, 0, 0)
         # self.forward_pid = PhotonPIDController(0.1, 0, 0)
