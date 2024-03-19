@@ -11,13 +11,26 @@ class EncoderGroup:
         self.front: SparkRelativeEncoder = front.getEncoder()
         self.rear: SparkRelativeEncoder = rear.getEncoder()
 
+    def set_conversion_factor(self, factor: float):
+        self.front.setPositionConversionFactor(factor)
+        self.rear.setPositionConversionFactor(factor)
+
 
 class Mecanum(Subsystem):
     REV_CPR = 42
     WHEEL_CIRCUMFERENCE = inchesToMeters(3.5)
 
-
-    __slots__ = ("inversion_factor", "arm", "drivetrain" "gyro", "left_front", "right_front", "left_rear", "right_rear")
+    __slots__ = (
+        "inversion_factor",
+        "arm",
+        "drivetrain" "gyro",
+        "left_front",
+        "right_front",
+        "left_rear",
+        "right_rear",
+        "left_encoders",
+        "right_encoders",
+    )
 
     def deadzone(self, value: float, deadzone: float = 0.075):
         """
@@ -57,14 +70,20 @@ class Mecanum(Subsystem):
         self.left_rear.setSmartCurrentLimit(40)
         self.right_rear.setSmartCurrentLimit(40)
 
-        self.left_front.getEncoder().setPositionConversionFactor(self.REV_CPR / self.WHEEL_CIRCUMFERENCE)
-        self.right_front.getEncoder().setPositionConversionFactor(self.REV_CPR / self.WHEEL_CIRCUMFERENCE)
-        self.left_rear.getEncoder().setPositionConversionFactor(self.REV_CPR / self.WHEEL_CIRCUMFERENCE)
-        self.right_rear.getEncoder().setPositionConversionFactor(self.REV_CPR / self.WHEEL_CIRCUMFERENCE)
-        
+        self.left_encoders = EncoderGroup(self.left_front, self.left_rear)
+        self.right_encoders = EncoderGroup(self.right_front, self.right_rear)
+
+        self.left_encoders.set_conversion_factor(
+            self.REV_CPR / self.WHEEL_CIRCUMFERENCE
+        )
+        self.right_encoders.set_conversion_factor(
+            self.REV_CPR / self.WHEEL_CIRCUMFERENCE
+        )
 
         """tell it how we want to drive"""
-        self.drivetrain = MecanumDrive(self.left_front, self.left_rear, self.right_front, self.right_rear)
+        self.drivetrain = MecanumDrive(
+            self.left_front, self.left_rear, self.right_front, self.right_rear
+        )
         self.drivetrain.setExpiration(0.1)
 
         self.drivetrain.setMaxOutput(max_output)

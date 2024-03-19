@@ -5,14 +5,10 @@ from commands2 import Command, CommandScheduler
 from wpilib import Encoder, DriverStation, Preferences
 from robotcontainer import RobotContainer
 from wpilib.shuffleboard import Shuffleboard
-from wpimath.kinematics import MecanumDriveKinematics, MecanumDriveWheelSpeeds
 from wpimath.controller import PIDController
 from photonlibpy.photonCamera import PhotonPipelineResult
 from logging import basicConfig, DEBUG, info
 from commands2.timedcommandrobot import TimedCommandRobot
-from wpimath.geometry import Translation2d
-from math import pi
-from navx import AHRS
 
 ARM_CPR = 7  # arm motor counts per revolution
 

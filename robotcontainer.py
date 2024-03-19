@@ -16,11 +16,13 @@ from subsystems.vision import Vision
 from wpimath.geometry import Rotation2d
 
 from enum import Enum, auto
-from navx import AHRS
+
 
 class DummyGyro:
     def getRotation2d(self) -> Rotation2d:
-        Rotation2d(0,0)
+        Rotation2d(0, 0)
+
+
 class RobotContainer:
     """
     This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -51,11 +53,10 @@ class RobotContainer:
     def __init__(self):
         """The container for the robot. Contains subsystems, OI devices, and commands."""
 
-
         # self.gyro = AHRS.create_i2c()  # ? or i2c?
         # ! this breaks tests for some reason
 
-        self.gyro = DummyGyro() # ! comment this out when not testing
+        self.gyro = DummyGyro()  # ! comment this out when not testing
 
         # initialize the robot's subsystems
         self.vision = Vision("Global_Camera_Shutter")

@@ -5,6 +5,7 @@ from photonlibpy.photonPoseEstimator import PhotonPoseEstimator, PoseStrategy
 from wpimath.geometry import Transform3d, Pose3d
 from robotpy_apriltag import AprilTagFieldLayout, AprilTagField
 
+
 class Vision(Subsystem):
     __slots__ = ("camera", "pose_estimator")
 
