@@ -13,12 +13,8 @@ class EncoderGroup:
 
 
 class Mecanum(Subsystem):
-    __slots__ = (
-        "inversion_factor",
-        "arm",
-        "drivetrain"
-        "gyro"
-    )
+    __slots__ = ("inversion_factor", "arm", "drivetrain" "gyro")
+
     def deadzone(self, value: float, deadzone: float = 0.075):
         """
         returns 0 if the value is within the deadzone, otherwise returns the value
@@ -40,11 +36,11 @@ class Mecanum(Subsystem):
 
         right_front = CANSparkMax(3, CANSparkMax.MotorType.kBrushless)
         left_front = CANSparkMax(4, CANSparkMax.MotorType.kBrushless)
-        
+
         """make them all brake when you let go of the stick"""
         left_front.setIdleMode(CANSparkMax.IdleMode.kBrake)
         left_rear.setIdleMode(CANSparkMax.IdleMode.kBrake)
-        
+
         right_front.setIdleMode(CANSparkMax.IdleMode.kBrake)
         right_rear.setIdleMode(CANSparkMax.IdleMode.kBrake)
 
@@ -57,14 +53,13 @@ class Mecanum(Subsystem):
         left_rear.setSmartCurrentLimit(40)
         right_rear.setSmartCurrentLimit(40)
 
-
         """tell it how we want to drive"""
         self.drivetrain = MecanumDrive(left_front, left_rear, right_front, right_rear)
         self.drivetrain.setExpiration(0.1)
 
         self.drivetrain.setMaxOutput(max_output)
 
-        self.gyro = AHRS.create_spi() # ? or is it i2c?
+        self.gyro = AHRS.create_spi()  # ? or is it i2c?
 
     def invert(self):
         """invert the drivetrain (for when aiming to shoot, since the shooter is in the back)"""
@@ -82,6 +77,6 @@ class Mecanum(Subsystem):
 
     def max_output(self, value: float):
         self.drivetrain.setMaxOutput(value)
-    
+
     def safety_enabled(self, value: bool):
         self.drivetrain.setSafetyEnabled(value)

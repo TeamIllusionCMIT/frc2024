@@ -25,12 +25,10 @@ class RobotContainer:
         """The container for the robot. Contains subsystems, OI devices, and commands."""
         # The robot's subsystems
         self.drivetrain = Mecanum()
-        self.shooter = Shooter() 
+        self.shooter = Shooter()
 
         # The driver's controller
-        self.driverController = XboxController(
-            0
-        )
+        self.driverController = XboxController(0)
 
         # Configure the button bindings
         self.configureButtonBindings()
@@ -118,8 +116,6 @@ class RobotContainer:
         # Controller(0).povUp().or_(Controller(0).povUpLeft()).or_(Controller(0).povUpRight()).onTrue(
         #     lambda: arm_up() # (this is positive 1)
         # )
-
-
 
         ...
 

@@ -2,11 +2,7 @@
 
 from typing import Optional
 from commands2 import Command, CommandScheduler
-from wpilib import (
-    Encoder,
-    DriverStation,
-    Preferences
-)
+from wpilib import Encoder, DriverStation, Preferences
 from robotcontainer import RobotContainer
 from wpilib.shuffleboard import Shuffleboard
 from wpimath.kinematics import MecanumDriveKinematics, MecanumDriveWheelSpeeds
@@ -29,8 +25,8 @@ class POVDirection:
     DOWN = (135, 180, 225)
 
 
-
 basicConfig(level=DEBUG)
+
 
 def cap(num: float, threshold: float):
     """returns a number or a maximum value."""
@@ -38,12 +34,7 @@ def cap(num: float, threshold: float):
 
 
 class Ghost(TimedCommandRobot):
-    __slots__ = (
-        "camera",
-        "auto_active",
-        "arm_encoder",
-        "subsystems"
-    )
+    __slots__ = ("camera", "auto_active", "arm_encoder", "subsystems")
 
     def init_pid(self):
         # self.forward_pid = PIDController(0.1, 0.01, 0.05)
@@ -90,7 +81,6 @@ class Ghost(TimedCommandRobot):
 
         self.dash = Shuffleboard.getTab("LiveWindow")
         self.dash.add("drivetrain", self.subsystems.drivetrain)
-        
 
     def teleopInit(self):
         """Executed at the start of teleop mode"""
@@ -98,11 +88,9 @@ class Ghost(TimedCommandRobot):
             self.autonomousCommand.cancel()
         self.subsystems.drivetrain.safety_enabled(True)
 
-    def teleopPeriodic(self):
-        ...
-        
-    def autonomousInit(self) -> None:
-        ...
+    def teleopPeriodic(self): ...
+
+    def autonomousInit(self) -> None: ...
 
     def autonomousPeriodic(self) -> None:
         """

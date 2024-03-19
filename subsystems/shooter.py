@@ -40,7 +40,6 @@ class Shooter(Subsystem):
         self.bottom_group = bottom_group
         self.shooter_group = shooter_group
 
-
     def arm_intake(self):
         # print("Swallowing the whole note.")
         self.bottom_group.set(0.25)
@@ -62,7 +61,7 @@ class Shooter(Subsystem):
 
     def set(self, speed: float):
         self.shooter_group.set(speed)
-        
+
     def set_arm(self, speed: float):
         self.bottom_group.set(speed)
         self.top_group.set(-speed)
