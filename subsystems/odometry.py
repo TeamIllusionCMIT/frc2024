@@ -6,6 +6,9 @@ from wpimath.kinematics import (
     MecanumDriveWheelPositions,
 )
 from wpimath.geometry import Translation2d, Rotation2d, Pose2d
+from wpilib import Field2d
+from wpilib.shuffleboard import Shuffleboard
+
 from math import pi
 from navx import AHRS
 from subsystems.vision import Vision
@@ -49,6 +52,14 @@ class Odometry(Subsystem):
             self.wheel_positions,
             Pose2d(5.0, 13.5, Rotation2d()),
         )
+        self.field = Field2d()
+        dash = Shuffleboard.getTab("LiveWindow")
+        # dash.add("odometry", self.odometry)
+        dash.add("field", self.field)
+        dash.add("gyro", gyro)
+        
+
+        self.update()
 
     def update(self):
         self.wheel_positions.frontLeft = (
@@ -61,7 +72,8 @@ class Odometry(Subsystem):
             self.drivetrain.right_encoders.front.getPosition()
         )
         self.wheel_positions.rearLeft = self.drivetrain.left_encoders.rear.getPosition()
-        self.odometry.update(self.gyro.getRotation2d, self.wheel_positions)
+        self.odometry.update(self.gyro.getRotation2d(), self.wheel_positions)
+        self.field.setRobotPose(self.odometry.getPose())
 
     def periodic(self):
         self.update()
