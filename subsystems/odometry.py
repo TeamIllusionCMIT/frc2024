@@ -66,15 +66,15 @@ class Odometry(Subsystem):
     def periodic(self):
         if self.timer.advanceIfElapsed(1):
             estimated_pose = self.vision.estimate_pose()
-            if estimated_pose: # * if we have a pose estimation from photonvision...
+            if estimated_pose:  # * if we have a pose estimation from photonvision...
                 pose = estimated_pose.toPose2d()
-                self.odometry.resetPosition( # *
-                    pose.rotation(), # * current true rotation
-                    self.update_wheel_positions(), # * current wheel positions
-                    pose, # * current true position
+                self.odometry.resetPosition(  # * reset the odometry to the new pose
+                    pose.rotation(),  # * current true rotation
+                    self.update_wheel_positions(),  # * current wheel positions
+                    pose,  # * current true position
                 )
                 self.field.setRobotPose(pose)
-                return # * don't update the odometry if we have a better estimate
+                return  # * don't update the odometry if we have a better estimate
         self.update()
 
     def get_pose(self) -> Pose2d:

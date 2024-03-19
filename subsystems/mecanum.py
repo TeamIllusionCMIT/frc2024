@@ -78,9 +78,7 @@ class Mecanum(Subsystem):
         )
 
         """tell it how we want to drive"""
-        self.drivetrain = MecanumDrive(
-            left_front, left_rear, right_front, right_rear
-        )
+        self.drivetrain = MecanumDrive(left_front, left_rear, right_front, right_rear)
         self.drivetrain.setExpiration(0.1)
 
         self.drivetrain.setMaxOutput(max_output)

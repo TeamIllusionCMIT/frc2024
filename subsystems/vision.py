@@ -2,7 +2,10 @@ from typing import Optional
 from commands2.subsystem import Subsystem
 from photonlibpy.photonCamera import PhotonCamera, PhotonPipelineResult
 from photonlibpy.photonTrackedTarget import PhotonTrackedTarget
-from photonlibpy.photonPoseEstimator import PhotonPoseEstimator, PoseStrategy, EstimatedRobotPose
+from photonlibpy.photonPoseEstimator import (
+    PhotonPoseEstimator,
+    PoseStrategy,
+)
 from wpimath.geometry import Transform3d, Pose3d
 from robotpy_apriltag import AprilTagFieldLayout, AprilTagField
 
@@ -20,15 +23,15 @@ class Vision(Subsystem):
             self.camera,
             Transform3d(Pose3d(), Pose3d()),
         )  # TODO: make this actually work
-        
+
         # * less computation, the computer gets to chill
         # * also gives streams higher fps
-        self.driver_mode = True 
+        self.driver_mode = True
 
     @property
     def driver_mode(self) -> bool:
         return self.camera.getDriverMode()
-    
+
     @driver_mode.setter
     def driver_mode(self, enable: bool) -> None:
         self.camera.setDriverMode(enable)
