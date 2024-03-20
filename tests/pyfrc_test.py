@@ -3,4 +3,5 @@
     to test basic functionality of just about any robot.
 """
 
-from pyfrc.tests import *
+# ruff: noqa
+from pyfrc.tests import *  # type: ignore
