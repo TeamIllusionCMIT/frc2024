@@ -12,6 +12,7 @@ from subsystems.mecanum import Mecanum
 from subsystems.shooter import Shooter
 from subsystems.odometry import Odometry
 from subsystems.vision import Vision
+from subsystems.arm import Arm
 
 from wpimath.geometry import Rotation2d
 
@@ -42,6 +43,7 @@ class RobotContainer:
         "gyro",
         "vision",
         "odometry",
+        "arm",
         "controller",
         "select_command",
     )
@@ -71,6 +73,7 @@ class RobotContainer:
         self.vision = Vision("Global_Camera_Shutter")
         self.drivetrain = Mecanum()
         self.shooter = Shooter()
+        self.arm = Arm()
 
         # * so the linter doesn't get mad at me
         self.odometry = Odometry(self.gyro, self.drivetrain, self.vision)  # type: ignore
@@ -170,10 +173,8 @@ class RobotContainer:
             )
         )
 
-        # * control arm with dpad
-        # Controller(0).povUp().or_(Controller(0).povUpLeft()).or_(Controller(0).povUpRight()).onTrue(
-        #     lambda: arm_up() # (this is positive 1)
-        # )
+        # * toggle arm up and down with x
+        Controller(0).x().onTrue(InstantCommand(lambda: self.arm.toggle(), self.arm))
 
         ...
 

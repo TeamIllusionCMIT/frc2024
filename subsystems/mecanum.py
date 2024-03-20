@@ -42,7 +42,6 @@ class Mecanum(Subsystem):
     def __init__(self, max_output: float = 1.0):
         super().__init__()
 
-        self.arm = CANSparkMax(9, CANSparkMax.MotorType.kBrushed)
         # self.arm.setIdleMode(CANSparkMax.IdleMode.kCoast)
 
         # * start off not inveretd

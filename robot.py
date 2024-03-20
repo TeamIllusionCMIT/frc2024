@@ -2,7 +2,7 @@
 
 from typing import Optional
 from commands2 import Command, CommandScheduler
-from wpilib import Encoder, DriverStation, Preferences
+from wpilib import DriverStation, Preferences
 from robotcontainer import RobotContainer
 from wpilib.shuffleboard import Shuffleboard
 from wpimath.controller import PIDController
@@ -28,7 +28,7 @@ def cap(num: float, threshold: float):
 
 
 class Ghost(TimedCommandRobot):
-    __slots__ = ("camera", "auto_active", "arm_encoder", "subsystems", "gyro")
+    __slots__ = ("auto_active", "subsystems")
 
     def init_pid(self):
         # self.forward_pid = PIDController(0.1, 0.01, 0.05)
@@ -51,13 +51,11 @@ class Ghost(TimedCommandRobot):
         # * allows the robot to remember + the dashboard to configure whether or not autonomous should run
         Preferences.initBoolean("auto_active", False)
         self.auto_active = Preferences.getBoolean("auto_active", False)
-        self.arm_encoder = Encoder(1, 2, False, Encoder.EncodingType.k4X)
-        self.arm_encoder.setDistancePerPulse(1 / 1167.75)
 
-        self.init_pid()
+        # self.init_pid()
 
-        self.dash = Shuffleboard.getTab("LiveWindow")
-        self.dash.add("drivetrain", self.subsystems.drivetrain)
+        dash = Shuffleboard.getTab("LiveWindow")
+        dash.add("drivetrain", self.subsystems.drivetrain)
 
     def teleopInit(self):
         """Executed at the start of teleop mode"""
