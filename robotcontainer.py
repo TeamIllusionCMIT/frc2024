@@ -6,7 +6,7 @@
 from wpilib import XboxController
 
 from commands2.button import CommandXboxController as Controller
-from commands2 import InstantCommand, Command, RunCommand, SelectCommand, PrintCommand
+from commands2 import InstantCommand, Command, RunCommand, 
 
 from subsystems.mecanum import Mecanum
 from subsystems.shooter import Shooter
@@ -45,7 +45,6 @@ class RobotContainer:
         "odometry",
         "arm",
         "controller",
-        "select_command",
     )
 
     class CommandSelector(Enum):
@@ -53,9 +52,6 @@ class RobotContainer:
         ONE = auto()
         TWO = auto()
         THREE = auto()
-
-    def select(self) -> CommandSelector:
-        return self.CommandSelector.NONE
 
     def __init__(self, is_fake: bool):
         """make a new robotcontainer. this class is where most of the actual robot logic is, and where the subsystems lie.
@@ -97,15 +93,15 @@ class RobotContainer:
             )
         )
 
-        self.select_command = SelectCommand(
-            # Maps selector values to commands
-            {
-                self.CommandSelector.ONE: PrintCommand("Command one was selected!"),
-                self.CommandSelector.TWO: PrintCommand("Command two was selected!"),
-                self.CommandSelector.THREE: PrintCommand("Command three was selected!"),
-            },
-            self.select,
-        )
+        # self.select_command = SelectCommand(
+        #     # Maps selector values to commands
+        #     {
+        #         self.CommandSelector.ONE: PrintCommand("Command one was selected!"),
+        #         self.CommandSelector.TWO: PrintCommand("Command two was selected!"),
+        #         self.CommandSelector.THREE: PrintCommand("Command three was selected!"),
+        #     },
+        #     self.select,
+        # )
 
     def configureButtonBindings(self):
         """
