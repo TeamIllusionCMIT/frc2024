@@ -50,7 +50,7 @@ poethepoet = "^0.25.0"
 format = "black ."
 lint = "ruff check ."
 test = "robotpy test"
-deploy = "robotpy deploy --skip-tests"
+deploy = "robotpy deploy"
 precommit.shell = "black . && ruff check ."
 
 [build-system]
