@@ -1,6 +1,7 @@
 from commands2.subsystem import Subsystem
 from rev import CANSparkMax
 from wpilib import Encoder
+from wpilib.shuffleboard import Shuffleboard
 
 
 class Arm(Subsystem):
@@ -14,6 +15,7 @@ class Arm(Subsystem):
         self.encoder.setDistancePerPulse(
             360 / 7
         )  # todo: test this and make sure it's even accurate
+        Shuffleboard.getTab("LiveWindow").add(self.encoder)
 
     def get_setpoint(self) -> int:
         return self.mode * 180
