@@ -56,7 +56,11 @@ class RobotContainer:
         return self.CommandSelector.NONE
 
     def __init__(self, is_fake: bool):
-        """The container for the robot. Contains subsystems, OI devices, and commands."""
+        """make a new robotcontainer. this class is where most of the actual robot logic is, and where the subsystems lie.
+
+        Args:
+            is_fake (bool): whether or not the robot is being simulated (including for tests). you can check with `wpilib.RobotBase.isSimulation()`.
+        """
 
         if is_fake:
             self.gyro = DummyGyro()

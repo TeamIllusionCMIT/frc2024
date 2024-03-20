@@ -48,6 +48,7 @@ class Ghost(TimedCommandRobot):
         self.autonomousCommand: Optional[Command] = None
         self.subsystems = RobotContainer(self.isSimulation())
 
+        # * allows the robot to remember + the dashboard to configure whether or not autonomous should run
         Preferences.initBoolean("auto_active", False)
         self.auto_active = Preferences.getBoolean("auto_active", False)
         self.arm_encoder = Encoder(1, 2, False, Encoder.EncodingType.k4X)

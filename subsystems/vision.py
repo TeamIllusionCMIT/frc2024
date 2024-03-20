@@ -34,9 +34,21 @@ class Vision(Subsystem):
 
     @driver_mode.setter
     def driver_mode(self, enable: bool) -> None:
+        """set the state of the driver mode.
+        driver mode is a state in which the camera won't process images and will instead just stream them directly to the driver station.
+        this results in less computation and higher fps.
+
+        args:
+            enable (bool): _description_
+        """
         self.camera.setDriverMode(enable)
 
     def best_target(self) -> PhotonTrackedTarget:
+        """gets the best target from the camera
+
+        returns:
+            PhotonTrackedTarget: the best target
+        """
         if self.driver_mode:
             self.driver_mode = False
 
@@ -48,12 +60,22 @@ class Vision(Subsystem):
         # self.forward_pid = PhotonPIDController(0.1, 0, 0)
 
     def latest_result(self) -> PhotonPipelineResult:
+        """gets the latest result from the camera
+
+        returns:
+            PhotonPipelineResult: the latest pipeline result
+        """
         if self.driver_mode:
             self.driver_mode = False
 
         return self.camera.getLatestResult()
 
     def estimate_pose(self) -> Optional[Pose3d]:
+        """estimates the pose of the robot using the camera data
+
+        returns:
+            Optional[Pose3d]: the estimated pose of the robot
+        """
         if self.driver_mode:
             self.driver_mode = False
 

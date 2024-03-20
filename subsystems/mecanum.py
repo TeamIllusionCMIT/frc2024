@@ -17,6 +17,8 @@ class EncoderGroup:
 
 
 class Mecanum(Subsystem):
+    """drivetrain subsystem."""
+
     REV_CPR = 42
     WHEEL_CIRCUMFERENCE = inchesToMeters(3.5)
 
@@ -43,25 +45,29 @@ class Mecanum(Subsystem):
         self.arm = CANSparkMax(9, CANSparkMax.MotorType.kBrushed)
         # self.arm.setIdleMode(CANSparkMax.IdleMode.kCoast)
 
-        self.inversion_factor = 1  # start off not inveretd
+        # * start off not inveretd
+        self.inversion_factor = 1
 
+        # * initialize the motors
         left_rear = CANSparkMax(1, CANSparkMax.MotorType.kBrushless)
         right_rear = CANSparkMax(2, CANSparkMax.MotorType.kBrushless)
 
         right_front = CANSparkMax(3, CANSparkMax.MotorType.kBrushless)
         left_front = CANSparkMax(4, CANSparkMax.MotorType.kBrushless)
 
-        """make them all brake when you let go of the stick"""
+        # * when we're not driving, brake
+        # ? do we want this? driving seems much smoother when coasting
         left_front.setIdleMode(CANSparkMax.IdleMode.kBrake)
         left_rear.setIdleMode(CANSparkMax.IdleMode.kBrake)
 
         right_front.setIdleMode(CANSparkMax.IdleMode.kBrake)
         right_rear.setIdleMode(CANSparkMax.IdleMode.kBrake)
 
-        """invert some of the motors (they just have to be like that)"""
+        # * invert the right side (they just are like this)
         right_front.setInverted(True)
         right_rear.setInverted(True)
 
+        # * basically power save mode for the motors
         left_front.setSmartCurrentLimit(40)
         right_front.setSmartCurrentLimit(40)
         left_rear.setSmartCurrentLimit(40)
@@ -70,6 +76,7 @@ class Mecanum(Subsystem):
         self.left_encoders = EncoderGroup(left_front, left_rear)
         self.right_encoders = EncoderGroup(right_front, right_rear)
 
+        # * make the encoders return meters
         self.left_encoders.set_conversion_factor(
             self.REV_CPR / self.WHEEL_CIRCUMFERENCE
         )
@@ -88,6 +95,13 @@ class Mecanum(Subsystem):
         self.inversion_factor *= -1
 
     def drive(self, forward_motion: float, side_motion: float, rotation: float):
+        """simpler drive function (also better labeled)
+
+        args:
+            forward_motion (float): the forward/backward input
+            side_motion (float): the left/right input
+            rotation (float): the rotation input
+        """
         self.drivetrain.driveCartesian(
             self.deadzone(forward_motion) * self.inversion_factor,
             self.deadzone(side_motion) * self.inversion_factor,
@@ -95,10 +109,20 @@ class Mecanum(Subsystem):
         )
 
     def stop(self):
+        """stop the drivetrain, pretty straightforward"""
         self.drivetrain.stopMotor()
 
     def max_output(self, value: float):
+        """set the maximum possible output of the drivetrain
+
+        args:
+            value (float): the maximum output. between -1 and 1.
+        """
         self.drivetrain.setMaxOutput(value)
 
     def safety_enabled(self, value: bool):
+        """set the safety of the drivetrain
+
+        args:
+            value (bool): whether or not the safety should be enabled"""
         self.drivetrain.setSafetyEnabled(value)

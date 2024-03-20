@@ -60,10 +60,12 @@ class Odometry(Subsystem):
         self.vision = vision
 
     def update(self):
+        """updates the odometry and field pose."""
         self.odometry.update(self.gyro.getRotation2d(), self.update_wheel_positions())
         self.field.setRobotPose(self.odometry.getPose())
 
     def periodic(self):
+        """updates the odometry periodically, and uses vision to update the field pose once a second."""
         if self.timer.advanceIfElapsed(1):
             estimated_pose = self.vision.estimate_pose()
             if estimated_pose:  # * if we have a pose estimation from photonvision...
@@ -78,9 +80,19 @@ class Odometry(Subsystem):
         self.update()
 
     def get_pose(self) -> Pose2d:
+        """get the current known robot pose
+
+        returns:
+            Pose2d: the current robot pose
+        """
         return self.odometry.getPose()
 
     def update_wheel_positions(self) -> MecanumDriveWheelPositions:
+        """update the robot's wheel positions.
+
+        returns:
+            MecanumDriveWheelPositions: the updated wheel positions object
+        """
         self.wheel_positions.frontLeft = (
             self.drivetrain.left_encoders.front.getPosition()
         )
