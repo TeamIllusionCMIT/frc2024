@@ -1,7 +1,8 @@
 from commands2.subsystem import Subsystem
 from rev import CANSparkMax, SparkRelativeEncoder
 from wpilib.drive import MecanumDrive
-from wpimath.units import inchesToMeters
+from constants import NEO_CPR, WHEEL_CIRCUMFERENCE
+from wpilib.shuffleboard import Shuffleboard
 
 
 class EncoderGroup:
@@ -18,9 +19,6 @@ class EncoderGroup:
 
 class Mecanum(Subsystem):
     """drivetrain subsystem."""
-
-    REV_CPR = 42
-    WHEEL_CIRCUMFERENCE = inchesToMeters(3.5)
 
     __slots__ = (
         "inversion_factor",
@@ -76,18 +74,17 @@ class Mecanum(Subsystem):
         self.right_encoders = EncoderGroup(right_front, right_rear)
 
         # * make the encoders return meters
-        self.left_encoders.set_conversion_factor(
-            self.REV_CPR / self.WHEEL_CIRCUMFERENCE
-        )
-        self.right_encoders.set_conversion_factor(
-            self.REV_CPR / self.WHEEL_CIRCUMFERENCE
-        )
+        self.left_encoders.set_conversion_factor(NEO_CPR / WHEEL_CIRCUMFERENCE)
+        self.right_encoders.set_conversion_factor(NEO_CPR / WHEEL_CIRCUMFERENCE)
 
         """tell it how we want to drive"""
         self.drivetrain = MecanumDrive(left_front, left_rear, right_front, right_rear)
         self.drivetrain.setExpiration(0.1)
 
         self.drivetrain.setMaxOutput(max_output)
+
+        dash = Shuffleboard.getTab("LiveWindow")
+        dash.add("drivetrain", self.drivetrain)
 
     def invert(self):
         """invert the drivetrain (for when aiming to shoot, since the shooter is in the back)"""

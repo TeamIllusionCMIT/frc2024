@@ -5,8 +5,8 @@
 #
 from wpilib import XboxController
 
-from commands2.button import CommandXboxController as Controller
-from commands2 import InstantCommand, Command, RunCommand, 
+from commands2.button import CommandXboxController
+from commands2 import InstantCommand, RunCommand
 
 from subsystems.mecanum import Mecanum
 from subsystems.shooter import Shooter
@@ -15,8 +15,6 @@ from subsystems.vision import Vision
 from subsystems.arm import Arm
 
 from wpimath.geometry import Rotation2d
-
-from enum import Enum, auto
 
 from navx import AHRS
 
@@ -47,12 +45,6 @@ class RobotContainer:
         "controller",
     )
 
-    class CommandSelector(Enum):
-        NONE = auto()
-        ONE = auto()
-        TWO = auto()
-        THREE = auto()
-
     def __init__(self, is_fake: bool):
         """make a new robotcontainer. this class is where most of the actual robot logic is, and where the subsystems lie.
 
@@ -65,43 +57,36 @@ class RobotContainer:
         else:
             self.gyro = AHRS.create_spi()  # ! since this breaks tests for some reason
 
-        # initialize the robot's subsystems
+        # * initialize the robot's subsystems
         self.vision = Vision("Global_Camera_Shutter")
         self.drivetrain = Mecanum()
         self.shooter = Shooter()
         self.arm = Arm()
 
-        # * so the linter doesn't get mad at me
         self.odometry = Odometry(self.gyro, self.drivetrain, self.vision)  # type: ignore
 
-        # The driver's controller
-        self.controller = XboxController(0)
+        # * The driver's controller
+        controller = XboxController(0)
+
+        # * the trigger controller
+        self.controller = CommandXboxController(0)
 
         # Configure the button bindings
         self.configureButtonBindings()
 
         # * sets the default command, which will run when
         # * no other command is running (for the drivetrain)
+        # * this one will drive the robot using controller input
         self.drivetrain.setDefaultCommand(
             RunCommand(
                 lambda: self.drivetrain.drive(
-                    -self.controller.getLeftY(),
-                    self.controller.getLeftX(),
-                    self.controller.getRightX(),
+                    -controller.getLeftY(),
+                    controller.getLeftX(),
+                    controller.getRightX(),
                 ),
                 self.drivetrain,
             )
         )
-
-        # self.select_command = SelectCommand(
-        #     # Maps selector values to commands
-        #     {
-        #         self.CommandSelector.ONE: PrintCommand("Command one was selected!"),
-        #         self.CommandSelector.TWO: PrintCommand("Command two was selected!"),
-        #         self.CommandSelector.THREE: PrintCommand("Command three was selected!"),
-        #     },
-        #     self.select,
-        # )
 
     def configureButtonBindings(self):
         """
@@ -110,7 +95,7 @@ class RobotContainer:
         subclasses (commands2.button.CommandJoystick or command2.button.CommandXboxController).
         """
         # * left trigger for shooter intake
-        Controller(0).leftTrigger(0.01).onTrue(
+        self.controller.leftTrigger(0.01).onTrue(
             RunCommand(
                 lambda: self.shooter.intake(),
                 self.shooter,
@@ -123,7 +108,7 @@ class RobotContainer:
         )
 
         # * right trigger to shoot
-        Controller(0).rightTrigger(0.01).onTrue(
+        self.controller.rightTrigger(0.01).onTrue(
             RunCommand(
                 lambda: self.shooter.shoot(),
                 self.shooter,
@@ -136,7 +121,7 @@ class RobotContainer:
         )
 
         # * left bumper to arm intake
-        Controller(0).leftBumper().onTrue(
+        self.controller.leftBumper().onTrue(
             RunCommand(
                 lambda: self.shooter.arm_intake(),
                 self.shooter,
@@ -149,7 +134,7 @@ class RobotContainer:
         )
 
         # * right bumper for arm spit
-        Controller(0).rightBumper().onTrue(
+        self.controller.rightBumper().onTrue(
             RunCommand(
                 lambda: self.shooter.arm_spit(),
                 self.shooter,
@@ -162,7 +147,7 @@ class RobotContainer:
         )
 
         # * A button to invert the drivetrain
-        Controller(0).start().onTrue(
+        self.controller.start().onTrue(
             InstantCommand(
                 lambda: self.drivetrain.invert(),
                 self.drivetrain,
@@ -170,14 +155,13 @@ class RobotContainer:
         )
 
         # * toggle arm up and down with x
-        Controller(0).x().onTrue(InstantCommand(lambda: self.arm.toggle(), self.arm))
+        self.controller.x().onTrue(InstantCommand(lambda: self.arm.toggle(), self.arm))
 
         ...
 
-    def getAutonomousCommand(self) -> Command:
+    def getAutonomousCommand(self):
         """
         Use this to pass the autonomous command to the main :class:`.Robot` class.
 
         :returns: the command to run in autonomous
         """
-        return self.select_command

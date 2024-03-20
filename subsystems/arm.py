@@ -24,8 +24,15 @@ class Arm(Subsystem):
         self.mode = (self.mode + 1) % 2
 
     def periodic(self):
+        #! positive is up, negative is down
         error = self.get_setpoint() - self.encoder.getDistance()
-        if error < 0.1:  # * if it's less than 0.1 degree off...
+        if abs(error) < 0.1:  # * if it's less than 0.1 degree off...
             self.motor.set(0)  # * stop the motor (we're close enough)
-        elif error > 0:  # * if the error is positive (not there yet)...
-            self.motor.set(-1)  # * keep moving
+
+        # * if the arm is too high, keep moving down
+        elif error > 0:
+            self.motor.set(-1)
+
+        # * if the arm is too low, keep moving up
+        elif error < 0:
+            self.motor.set(1)

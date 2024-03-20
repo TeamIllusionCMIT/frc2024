@@ -82,8 +82,10 @@ class Vision(Subsystem):
         # gets the current best target
         pose_result = self.pose_estimator.update(self.latest_result())
         return pose_result.estimatedPose if pose_result else None
-    
-    def calculate_distance(self, target: Optional[PhotonTrackedTarget] = None) -> Optional[float]:
+
+    def calculate_distance(
+        self, target: Optional[PhotonTrackedTarget] = None
+    ) -> Optional[float]:
         """estimates the distance from the nearest target based on it's size in the frame.
 
         returns:
@@ -93,4 +95,4 @@ class Vision(Subsystem):
 
         # ! calculated for our 100deg global shutter camera
         # ! will likely be inaccurate for others
-        return (-0.2326*self.best_target().area)+2.1867
+        return (-0.2326 * self.best_target().area) + 2.1867

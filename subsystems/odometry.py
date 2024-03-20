@@ -9,19 +9,18 @@ from wpimath.geometry import Translation2d, Rotation2d, Pose2d
 from wpilib import Field2d, Timer
 from wpilib.shuffleboard import Shuffleboard
 
-from math import pi
 from navx import AHRS
 from subsystems.vision import Vision
 from subsystems.mecanum import Mecanum
 
+from constants import LINEAR_SPEED
+
 
 class Odometry(Subsystem):
-
-    MOTOR_FREE_SPEED = 5676
-    LINEAR_SPEED = ((2 * pi) * 7.5 * (MOTOR_FREE_SPEED / 60)) / 100  # in m/s
+    """basically robot gps. the robot thinks about how much the wheels have turned and its original position to figure out where it is now."""
 
     def __init__(self, gyro: AHRS, drivetrain: Mecanum, vision: Vision):
-        self.timer = Timer()
+        self.vision_timer = Timer()  # cooldown for vision updates
         self.drivetrain = drivetrain
 
         self.kinematics = MecanumDriveKinematics(
@@ -36,7 +35,7 @@ class Odometry(Subsystem):
         # Example differential drive wheel speeds: 2 meters per second
         # for the left side, 3 meters per second for the right side.
         self.wheel_speeds = MecanumDriveWheelSpeeds(
-            self.LINEAR_SPEED, self.LINEAR_SPEED, self.LINEAR_SPEED, self.LINEAR_SPEED
+            LINEAR_SPEED, LINEAR_SPEED, LINEAR_SPEED, LINEAR_SPEED
         )
 
         # Convert to chassis speeds.
@@ -51,12 +50,11 @@ class Odometry(Subsystem):
         )
         self.field = Field2d()
         dash = Shuffleboard.getTab("LiveWindow")
-        # dash.add("odometry", self.odometry)
         dash.add("field", self.field)
         dash.add("gyro", gyro.getAngle())
 
         self.update()
-        self.timer.start()
+        self.vision_timer.start()
         self.vision = vision
 
     def update(self):
@@ -66,7 +64,7 @@ class Odometry(Subsystem):
 
     def periodic(self):
         """updates the odometry periodically, and uses vision to update the field pose once a second."""
-        if self.timer.advanceIfElapsed(1):
+        if self.vision_timer.advanceIfElapsed(1):
             estimated_pose = self.vision.estimate_pose()
             if estimated_pose:  # * if we have a pose estimation from photonvision...
                 pose = estimated_pose.toPose2d()
@@ -76,6 +74,7 @@ class Odometry(Subsystem):
                     pose,  # * current true position
                 )
                 self.field.setRobotPose(pose)
+                self.vision.driver_mode = True  # * set the driver mode to true again
                 return  # * don't update the odometry if we have a better estimate
         self.update()
 

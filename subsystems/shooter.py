@@ -24,16 +24,9 @@ class Shooter(Subsystem):
 
         top_group = MotorControllerGroup(intake_top_left, intake_top_right)
         bottom_group = MotorControllerGroup(intake_bot_left, intake_bot_right)
+        top_group.setInverted(True)
 
         shooter_group = MotorControllerGroup(shooter_left, shooter_right)
-
-        self.intake_top_right = intake_top_right
-        self.intake_top_left = intake_top_left
-        self.intake_bot_right = intake_bot_right
-        self.intake_bot_left = intake_bot_left
-
-        self.shooter_left = shooter_left
-        self.shooter_right = shooter_right
 
         """let us use the motor control groups in the other functions (the parts that start with def like def robotInit)"""
         self.top_group = top_group
@@ -43,12 +36,12 @@ class Shooter(Subsystem):
     def arm_intake(self):
         # print("Swallowing the whole note.")
         self.bottom_group.set(0.25)
-        self.top_group.set(-0.25)
+        self.top_group.set(0.25)
 
     def arm_spit(self):
         # print("Regurgitating the whole note.")
         self.bottom_group.set(-0.5)
-        self.top_group.set(0.5)
+        self.top_group.set(-0.5)
 
     def intake(self):
         self.shooter_group.set(-0.5)
@@ -64,7 +57,7 @@ class Shooter(Subsystem):
 
     def set_arm(self, speed: float):
         self.bottom_group.set(speed)
-        self.top_group.set(-speed)
+        self.top_group.set(speed)
 
     def arm_stop(self):
         self.bottom_group.set(0)
