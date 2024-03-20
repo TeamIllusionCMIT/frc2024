@@ -51,7 +51,7 @@ format = "black ."
 lint = "ruff check ."
 test = "robotpy test"
 deploy = "robotpy deploy"
-precommit.shell = "black . && ruff check ."
+precommit.shell = "black . && ruff check . && robotpy test"
 
 [build-system]
 requires = ["poetry-core"]
