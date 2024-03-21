@@ -45,7 +45,7 @@ class Vision(Subsystem):
         """
         self.camera.setDriverMode(enable)
 
-    def best_target(self) -> PhotonTrackedTarget:
+    def best_target(self) -> Optional[PhotonTrackedTarget]:
         """gets the best target from the camera
 
         returns:
@@ -56,7 +56,10 @@ class Vision(Subsystem):
 
         # gets the current best target
         targets = self.latest_result().getTargets()
-        return targets[0]
+        target = None
+        if targets:
+            target = sorted(targets, key=lambda item: abs(item.getYaw()))[0]
+        return target
 
         # self.drive_pid = PhotonPIDController(0.1, 0, 0)
         # self.forward_pid = PhotonPIDController(0.1, 0, 0)
@@ -94,21 +97,28 @@ class Vision(Subsystem):
             Optional[float]: the distance in meters
         """
         target = target or self.best_target()
+        if not target:
+            return None
 
         # ! calculated for our 100deg global shutter camera
         # ! will likely be inaccurate for others
-        return (-0.2326 * self.best_target().getArea()) + 2.1867
+        return (-0.2326 * target.getArea()) + 2.1867
 
-    def align_to_april_tag(self) -> tuple[float]:
+    def align_to_april_tag(self) -> Optional[tuple[float, float, float]]:
         """calculates the pid output required to align the robot with the best apriltag target.
 
         returns:
             tuple[float]: the forward, side, and rotate motion, respectively
-        """        
+        """
         target = self.best_target()
+        if not target:
+            return None
         pid_controller = PIDController(DrivePID.K_P, DrivePID.K_I, DrivePID.K_D)
+        forward_distance = self.calculate_distance(target)
+        if not forward_distance:
+            return None  # appease the linter
         return (
-            pid_controller.calculate(self.calculate_distance(target.getArea()), 0),
-            pid_controller.calculate(target.getYaw(), 0),
-            pid_controller.calculate(target.getSkew(), 0),
+            pid_controller.calculate(forward_distance, 0.0),
+            pid_controller.calculate(target.getYaw(), 0.0),
+            pid_controller.calculate(target.getSkew(), 0.0),
         )
