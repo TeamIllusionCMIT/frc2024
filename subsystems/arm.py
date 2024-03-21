@@ -14,6 +14,7 @@ class Arm(Subsystem):
         self.mode = 0
         self.encoder.setDistancePerPulse(1 / 7)
         Shuffleboard.getTab("LiveWindow").add(self.encoder)
+        Shuffleboard.getTab("LiveWindow").add("arm setpoint", self.mode * 180)
 
     def get_setpoint(self) -> int:
         return self.mode * 165
@@ -22,6 +23,7 @@ class Arm(Subsystem):
         self.mode = (self.mode + 1) % 2
 
     def periodic(self):
+        return # skip all the other stuff
         #! positive is up, negative is down
         error = self.get_setpoint() - self.encoder.getDistance()
         if abs(error) < 0.1:  # * if it's less than 0.1 degree off...
@@ -29,8 +31,8 @@ class Arm(Subsystem):
 
         # * if the arm is too high, keep moving down
         elif error > 0:
-            self.motor.set(-1)
+            self.motor.set(-0.5)
 
         # * if the arm is too low, keep moving up
         elif error < 0:
-            self.motor.set(1)
+            self.motor.set(0.5)

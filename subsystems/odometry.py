@@ -64,6 +64,9 @@ class Odometry(Subsystem):
 
     def periodic(self):
         """updates the odometry periodically, and uses vision to update the field pose once a second."""
+        if not self.vision or not self.vision_timer.advanceIfElapsed(1):
+            self.update()
+            return
         if self.vision_timer.advanceIfElapsed(1):
             estimated_pose = self.vision.estimate_pose()
             if estimated_pose:  # * if we have a pose estimation from photonvision...
@@ -76,7 +79,6 @@ class Odometry(Subsystem):
                 self.field.setRobotPose(pose)
                 self.vision.driver_mode = True  # * set the driver mode to true again
                 return  # * don't update the odometry if we have a better estimate
-        self.update()
 
     def get_pose(self) -> Pose2d:
         """get the current known robot pose
