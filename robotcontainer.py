@@ -97,12 +97,12 @@ class RobotContainer:
         # * left trigger for shooter intake
         self.controller.leftTrigger(0.01).onTrue(
             InstantCommand(
-                lambda: self.shooter.intake(),
+                self.shooter.intake,
                 self.shooter,
             )
         ).onFalse(
             InstantCommand(
-                lambda: self.shooter.stop(),
+                self.shooter.stop,
                 self.shooter,
             )
         )
@@ -110,12 +110,12 @@ class RobotContainer:
         # * right trigger to shoot
         self.controller.rightTrigger(0.01).onTrue(
             InstantCommand(
-                lambda: self.shooter.shoot(),
+                self.shooter.shoot,
                 self.shooter,
             )
         ).onFalse(
             InstantCommand(
-                lambda: self.shooter.stop(),
+                self.shooter.stop,
                 self.shooter,
             )
         )
@@ -123,12 +123,12 @@ class RobotContainer:
         # * left bumper to arm intake
         self.controller.leftBumper().onTrue(
             InstantCommand(
-                lambda: self.shooter.arm_intake(),
+                self.shooter.arm_intake,
                 self.shooter,
             )
         ).onFalse(
             InstantCommand(
-                lambda: self.shooter.arm_stop(),
+                self.shooter.arm_stop,
                 self.shooter,
             )
         )
@@ -136,12 +136,12 @@ class RobotContainer:
         # * right bumper for arm spit
         self.controller.rightBumper().onTrue(
             InstantCommand(
-                lambda: self.shooter.arm_spit(),
+                self.shooter.arm_spit,
                 self.shooter,
             )
         ).onFalse(
             InstantCommand(
-                lambda: self.shooter.arm_stop(),
+                self.shooter.arm_stop,
                 self.shooter,
             )
         )
@@ -149,13 +149,13 @@ class RobotContainer:
         # * A button to invert the drivetrain
         self.controller.start().onTrue(
             InstantCommand(
-                lambda: self.drivetrain.invert(),
+                self.drivetrain.invert,
                 self.drivetrain,
             )
         )
 
         # * toggle arm up and down with x
-        self.controller.x().onTrue(InstantCommand(lambda: self.arm.toggle(), self.arm))
+        self.controller.x().onTrue(InstantCommand(self.arm.toggle, self.arm))
 
         self.controller.a().whileTrue(
             InstantCommand(
