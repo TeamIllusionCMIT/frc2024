@@ -12,13 +12,11 @@ class Arm(Subsystem):
         self.motor = CANSparkMax(9, CANSparkMax.MotorType.kBrushed)
         self.encoder = Encoder(1, 2, False, Encoder.EncodingType.k4X)
         self.mode = 0
-        self.encoder.setDistancePerPulse(
-            360 / 7
-        )  # todo: test this and make sure it's even accurate
+        self.encoder.setDistancePerPulse(1 / 7)
         Shuffleboard.getTab("LiveWindow").add(self.encoder)
 
     def get_setpoint(self) -> int:
-        return self.mode * 180
+        return self.mode * 165
 
     def toggle(self):
         self.mode = (self.mode + 1) % 2
