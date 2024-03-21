@@ -15,7 +15,7 @@ class Arm(Subsystem):
         self.pid.setP(0.05)
         self.pid.setI(0)
         self.pid.setD(0)
-        
+
         self.encoder = Encoder(1, 2, False, Encoder.EncodingType.k4X)
         self.mode = 0
         self.encoder.setDistancePerPulse(1 / 7)
