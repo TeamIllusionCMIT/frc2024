@@ -8,6 +8,8 @@ from photonlibpy.photonPoseEstimator import (
 )
 from wpimath.geometry import Transform3d, Pose3d
 from robotpy_apriltag import AprilTagFieldLayout, AprilTagField
+from wpimath.controller import PIDController
+from constants import DrivePID
 
 
 class Vision(Subsystem):
@@ -95,4 +97,18 @@ class Vision(Subsystem):
 
         # ! calculated for our 100deg global shutter camera
         # ! will likely be inaccurate for others
-        return (-0.2326 * self.best_target().area) + 2.1867
+        return (-0.2326 * self.best_target().getArea()) + 2.1867
+
+    def align_to_april_tag(self) -> tuple[float]:
+        """calculates the pid output required to align the robot with the best apriltag target.
+
+        returns:
+            tuple[float]: the forward, side, and rotate motion, respectively
+        """        
+        target = self.best_target()
+        pid_controller = PIDController(DrivePID.K_P, DrivePID.K_I, DrivePID.K_D)
+        return (
+            pid_controller.calculate(self.calculate_distance(target.getArea()), 0),
+            pid_controller.calculate(target.getYaw(), 0),
+            pid_controller.calculate(target.getSkew(), 0),
+        )

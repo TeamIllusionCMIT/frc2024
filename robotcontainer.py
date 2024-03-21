@@ -157,6 +157,15 @@ class RobotContainer:
         # * toggle arm up and down with x
         self.controller.x().onTrue(InstantCommand(lambda: self.arm.toggle(), self.arm))
 
+        self.controller.a().whileTrue(
+            InstantCommand(
+                lambda: self.drivetrain.drivetrain.driveCartesian(
+                    *self.vision.align_to_april_tag()
+                ),
+                self.vision,
+                self.drivetrain,
+            )
+        )
         ...
 
     def getAutonomousCommand(self):
