@@ -156,19 +156,19 @@ class RobotContainer:
         )
 
         # * toggle arm up and down with x
-        # self.controller.x().onTrue(InstantCommand(lambda: self.arm.toggle(), self.arm))
+        self.controller.x().onTrue(InstantCommand(lambda: self.arm.toggle(), self.arm))
 
-        self.controller.povUp().or_(self.controller.povUpLeft()).or_(
-            self.controller.povUpLeft()
-        ).onTrue(InstantCommand(lambda: self.arm.motor.set(1))).onFalse(
-            InstantCommand(lambda: self.arm.motor.set(0))
-        )
+        # self.controller.povUp().or_(self.controller.povUpLeft()).or_(
+        #     self.controller.povUpLeft()
+        # ).onTrue(InstantCommand(lambda: self.arm.motor.set(1))).onFalse(
+        #     InstantCommand(lambda: self.arm.motor.set(0))
+        # )
 
-        self.controller.povDown().or_(self.controller.povDownLeft()).or_(
-            self.controller.povDownLeft()
-        ).onTrue(InstantCommand(lambda: self.arm.motor.set(-1))).onFalse(
-            InstantCommand(lambda: self.arm.motor.set(0))
-        )
+        # self.controller.povDown().or_(self.controller.povDownLeft()).or_(
+        #     self.controller.povDownLeft()
+        # ).onTrue(InstantCommand(lambda: self.arm.motor.set(-1))).onFalse(
+        #     InstantCommand(lambda: self.arm.motor.set(0))
+        # )
 
         self.controller.a().whileTrue(
             InstantCommand(

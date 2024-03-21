@@ -13,7 +13,7 @@ class Shooter(Subsystem):
         intake_top_right = CANSparkMax(8, CANSparkMax.MotorType.kBrushless)
 
         intake_top_left.setInverted(True)
-        intake_bot_right.setInverted(True)
+        # intake_bot_right.setInverted(True)
 
         shooter_left = CANSparkMax(10, CANSparkMax.MotorType.kBrushed)
         shooter_right = CANSparkMax(11, CANSparkMax.MotorType.kBrushless)

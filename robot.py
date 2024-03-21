@@ -31,6 +31,9 @@ class Ghost(TimedCommandRobot):
 
     def teleopPeriodic(self): ...
 
+    def teleopExit(self) -> None:
+        self.subsystems.arm.mode = 0
+
     def autonomousInit(self) -> None: ...
 
     def autonomousPeriodic(self) -> None:
@@ -40,6 +43,7 @@ class Ghost(TimedCommandRobot):
 
     def autonomousExit(self) -> None:
         self.subsystems.drivetrain.stop()
+        self.subsystems.arm.mode = 0
 
     def testInit(self) -> None:
         CommandScheduler.getInstance().cancelAll()
