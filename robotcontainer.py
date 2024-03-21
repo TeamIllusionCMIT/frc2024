@@ -96,7 +96,7 @@ class RobotContainer:
         """
         # * left trigger for shooter intake
         self.controller.leftTrigger(0.01).onTrue(
-            RunCommand(
+            InstantCommand(
                 lambda: self.shooter.intake(),
                 self.shooter,
             )
@@ -109,7 +109,7 @@ class RobotContainer:
 
         # * right trigger to shoot
         self.controller.rightTrigger(0.01).onTrue(
-            RunCommand(
+            InstantCommand(
                 lambda: self.shooter.shoot(),
                 self.shooter,
             )
@@ -122,7 +122,7 @@ class RobotContainer:
 
         # * left bumper to arm intake
         self.controller.leftBumper().onTrue(
-            RunCommand(
+            InstantCommand(
                 lambda: self.shooter.arm_intake(),
                 self.shooter,
             )
@@ -135,7 +135,7 @@ class RobotContainer:
 
         # * right bumper for arm spit
         self.controller.rightBumper().onTrue(
-            RunCommand(
+            InstantCommand(
                 lambda: self.shooter.arm_spit(),
                 self.shooter,
             )
