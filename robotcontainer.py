@@ -160,7 +160,7 @@ class RobotContainer:
         self.controller.a().whileTrue(
             InstantCommand(
                 lambda: self.drivetrain.drivetrain.driveCartesian(
-                    *self.vision.align_to_april_tag()
+                    *(self.vision.align_to_april_tag() or (0, 0, 0))
                 ),
                 self.vision,
                 self.drivetrain,
