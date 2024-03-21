@@ -23,7 +23,7 @@ class Arm(Subsystem):
         self.mode = (self.mode + 1) % 2
 
     def periodic(self):
-        return # skip all the other stuff
+        return  # skip all the other stuff
         #! positive is up, negative is down
         error = self.get_setpoint() - self.encoder.getDistance()
         if abs(error) < 0.1:  # * if it's less than 0.1 degree off...
