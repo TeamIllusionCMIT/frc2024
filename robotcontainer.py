@@ -184,7 +184,14 @@ class RobotContainer:
             self.arm.motor.stopMotor()
             self.arm.encoder.reset()
 
-        self.controller.back().onTrue(FunctionalCommand(onInit=self.arm.motor.stopMotor, onExecute=self.arm.motor.set(-0.5), onEnd=reset_arm, isFinished=self.arm.encoder.getRate(0)))
+        self.controller.back().onTrue(
+            FunctionalCommand(
+                onInit=self.arm.motor.stopMotor,
+                onExecute=self.arm.motor.set(-0.5),
+                onEnd=reset_arm,
+                isFinished=self.arm.encoder.getRate(0),
+            )
+        )
         ...
 
     def getAutonomousCommand(self):

@@ -6,7 +6,6 @@ from constants import ArmPID
 from wpimath.controller import PIDController
 
 
-
 class Arm(Subsystem):
     __slots__ = ("motor", "encoder", "setpoint", "pid")
 
