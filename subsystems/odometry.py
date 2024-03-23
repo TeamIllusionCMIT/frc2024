@@ -18,6 +18,7 @@ from logging import basicConfig, DEBUG, info as linfo
 
 basicConfig(level=DEBUG)
 
+
 def info(message: str):
     if (not DriverStation.isDSAttached()) or DriverStation.isFMSAttached():
         # * don't run if there's no driver station/we're in competition
@@ -61,7 +62,6 @@ class Odometry(Subsystem):
         self.field.setRobotPose(robot)
         dash = Shuffleboard.getTab("LiveWindow")
         dash.add("field", self.field)
-        
 
         self.update()
         self.vision_timer.start()
