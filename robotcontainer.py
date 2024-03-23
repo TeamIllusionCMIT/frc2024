@@ -156,7 +156,17 @@ class RobotContainer:
         )
 
         # * toggle arm up and down with x
-        self.controller.x().onTrue(InstantCommand(lambda: self.arm.toggle(), self.arm))
+        self.controller.x().onTrue(
+            InstantCommand(
+                self.drivetrain.invert, self.drivetrain
+            ).andThen(InstantCommand(self.arm.toggle, self.arm))
+        )
+
+        self.controller.y().onTrue(
+            InstantCommand(lambda: self.arm.motor.set(0.3))
+        ).onFalse(
+            InstantCommand(lambda: self.arm.motor.set(0))
+        )
 
         # self.controller.povUp().or_(self.controller.povUpLeft()).or_(
         #     self.controller.povUpLeft()
@@ -184,7 +194,15 @@ class RobotContainer:
             self.arm.motor.stopMotor()
             self.arm.encoder.reset()
 
-        self.controller.back().onTrue(FunctionalCommand(onInit=self.arm.motor.stopMotor, onExecute=self.arm.motor.set(-0.5), onEnd=reset_arm, isFinished=self.arm.encoder.getRate(0)))
+        self.controller.back().onTrue(
+            FunctionalCommand(
+                onInit=self.arm.motor.stopMotor,
+                onExecute=lambda: self.arm.motor.set(-0.75),
+                onEnd=reset_arm,
+                isFinished=lambda: self.arm.encoder.getRate() == 0,
+            )
+        )
+
         ...
 
     def getAutonomousCommand(self):

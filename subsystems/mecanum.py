@@ -12,6 +12,9 @@ class EncoderGroup:
         self.front: SparkRelativeEncoder = front.getEncoder()
         self.rear: SparkRelativeEncoder = rear.getEncoder()
 
+        self.front.setPosition(0)
+        self.rear.setPosition(0)
+
     def set_conversion_factor(self, factor: float):
         self.front.setPositionConversionFactor(factor)
         self.rear.setPositionConversionFactor(factor)
@@ -43,7 +46,7 @@ class Mecanum(Subsystem):
         # self.arm.setIdleMode(CANSparkMax.IdleMode.kCoast)
 
         # * start off not inveretd
-        self.inversion_factor = 1
+        self.inversion_factor = -1
 
         # * initialize the motors
         left_rear = CANSparkMax(1, CANSparkMax.MotorType.kBrushless)
@@ -54,11 +57,11 @@ class Mecanum(Subsystem):
 
         # * when we're not driving, brake
         # ? do we want this? driving seems much smoother when coasting
-        left_front.setIdleMode(CANSparkMax.IdleMode.kBrake)
-        left_rear.setIdleMode(CANSparkMax.IdleMode.kBrake)
+        left_front.setIdleMode(CANSparkMax.IdleMode.kCoast)
+        left_rear.setIdleMode(CANSparkMax.IdleMode.kCoast)
 
-        right_front.setIdleMode(CANSparkMax.IdleMode.kBrake)
-        right_rear.setIdleMode(CANSparkMax.IdleMode.kBrake)
+        right_front.setIdleMode(CANSparkMax.IdleMode.kCoast)
+        right_rear.setIdleMode(CANSparkMax.IdleMode.kCoast)
 
         # * invert the right side (they just are like this)
         right_front.setInverted(True)
@@ -73,6 +76,9 @@ class Mecanum(Subsystem):
         self.left_encoders = EncoderGroup(left_front, left_rear)
         self.right_encoders = EncoderGroup(right_front, right_rear)
 
+        dash = Shuffleboard.getTab("LiveWindow")
+        dash.add("left front", self.left_encoders.front.getPosition())
+        dash.add("right front", self.right_encoders.front.getPosition())
         # * make the encoders return meters
         self.left_encoders.set_conversion_factor(NEO_CPR / WHEEL_CIRCUMFERENCE)
         self.right_encoders.set_conversion_factor(NEO_CPR / WHEEL_CIRCUMFERENCE)
@@ -83,7 +89,6 @@ class Mecanum(Subsystem):
 
         self.drivetrain.setMaxOutput(max_output)
 
-        dash = Shuffleboard.getTab("LiveWindow")
         dash.add("drivetrain", self.drivetrain)
 
     def invert(self):
@@ -101,7 +106,7 @@ class Mecanum(Subsystem):
         self.drivetrain.driveCartesian(
             self.deadzone(forward_motion) * self.inversion_factor,
             self.deadzone(side_motion) * self.inversion_factor,
-            self.deadzone(rotation) * self.inversion_factor,
+            self.deadzone(rotation),
         )
 
     def stop(self):

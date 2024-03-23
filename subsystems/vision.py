@@ -85,7 +85,10 @@ class Vision(Subsystem):
             self.driver_mode = False
 
         # gets the current best target
-        pose_result = self.pose_estimator.update(self.latest_result())
+        latest_result = self.latest_result()
+        if not latest_result:
+            return None
+        pose_result = self.pose_estimator.update()
         return pose_result.estimatedPose if pose_result else None
 
     def calculate_distance(

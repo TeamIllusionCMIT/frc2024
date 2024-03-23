@@ -15,16 +15,17 @@ class Shooter(Subsystem):
         intake_top_left.setInverted(True)
         # intake_bot_right.setInverted(True)
 
-        shooter_left = CANSparkMax(10, CANSparkMax.MotorType.kBrushed)
+        shooter_left = CANSparkMax(10, CANSparkMax.MotorType.kBrushless)
         shooter_right = CANSparkMax(11, CANSparkMax.MotorType.kBrushless)
         shooter_right.setInverted(False)
+        shooter_left.setInverted(True)
 
         shooter_left.setIdleMode(CANSparkMax.IdleMode.kBrake)
         shooter_right.setIdleMode(CANSparkMax.IdleMode.kBrake)
 
         top_group = MotorControllerGroup(intake_top_left, intake_top_right)
         bottom_group = MotorControllerGroup(intake_bot_left, intake_bot_right)
-        top_group.setInverted(True)
+        intake_top_right.setInverted(True)
 
         shooter_group = MotorControllerGroup(shooter_left, shooter_right)
 
@@ -40,17 +41,19 @@ class Shooter(Subsystem):
 
     def arm_spit(self):
         # print("Regurgitating the whole note.")
-        self.bottom_group.set(-0.5)
-        self.top_group.set(-0.5)
+        self.bottom_group.set(-0.25)
+        self.top_group.set(-0.25)
 
     def intake(self):
         self.shooter_group.set(-0.5)
 
     def shoot(self):
-        self.shooter_group.set(1)
+        self.shooter_group.set(0.75)
+        self.arm_spit()
 
     def stop(self):
         self.shooter_group.set(0)
+        self.arm_stop()
 
     def set(self, speed: float):
         self.shooter_group.set(speed)

@@ -1,10 +1,8 @@
 from commands2.subsystem import Subsystem
 from rev import CANSparkMax
-from wpilib import Encoder, Preferences
-from wpilib.shuffleboard import Shuffleboard
+from wpilib import Encoder
 from constants import ArmPID
 from wpimath.controller import PIDController
-
 
 
 class Arm(Subsystem):
@@ -19,14 +17,19 @@ class Arm(Subsystem):
         self.encoder = Encoder(1, 2, False, Encoder.EncodingType.k4X)
         self.mode = 0
         self.encoder.setDistancePerPulse(1 / 7)
-        Shuffleboard.getTab("LiveWindow").add(self.encoder)
-        Shuffleboard.getTab("LiveWindow").add(self.pid)
+        # Shuffleboard.getTab("LiveWindow").add(self.encoder)
+        # Shuffleboard.getTab("LiveWindow").add(self.pid)
 
     def get_setpoint(self) -> int:
-        return self.mode * 88
+        if self.mode == 2:
+            return 88
+        return self.mode * 176
 
     def toggle(self):
-        self.mode = (self.mode + 1) % 3
+        self.mode = (self.mode + 1) % 2
+
+    def aim_amp(self):
+        self.mode = 2
 
     def periodic(self):
         # return # skip all the other stuff
@@ -35,8 +38,13 @@ class Arm(Subsystem):
         # self.motor.set(self.pid.calculate(error, self.get_setpoint()))
         if abs(error) < 1:
             self.motor.set(0)
+            if self.get_setpoint() == 0:
+                self.encoder.reset()
         else:
-            self.motor.set((error * ArmPID.K_P) + (0.3 * error / abs(error)))
+            if self.mode == 2:  # if it's aiming for the amp
+                self.motor.set(0.75)  # lower power
+            else:
+                self.motor.set((error * ArmPID.K_P) + (0.3 * error / abs(error)))
         # self.pid.setReference(self.get_setpoint(), CANSparkMax.ControlType.kPosition)
         # print(error)
         # if abs(error) < 1:  # * if it's less than 0.1 degree off...

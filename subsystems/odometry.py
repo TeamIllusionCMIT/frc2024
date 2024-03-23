@@ -6,7 +6,7 @@ from wpimath.kinematics import (
     MecanumDriveWheelPositions,
 )
 from wpimath.geometry import Translation2d, Rotation2d, Pose2d
-from wpilib import Field2d, Timer
+from wpilib import Field2d, Timer, DriverStation
 from wpilib.shuffleboard import Shuffleboard
 
 from navx import AHRS
@@ -14,6 +14,15 @@ from subsystems.vision import Vision
 from subsystems.mecanum import Mecanum
 
 from constants import LINEAR_SPEED
+from logging import basicConfig, DEBUG, info as linfo
+
+basicConfig(level=DEBUG)
+
+def info(message: str):
+    if (not DriverStation.isDSAttached()) or DriverStation.isFMSAttached():
+        # * don't run if there's no driver station/we're in competition
+        return
+    linfo(message)
 
 
 class Odometry(Subsystem):
@@ -46,12 +55,13 @@ class Odometry(Subsystem):
             self.kinematics,
             self.gyro.getRotation2d(),
             self.wheel_positions,
-            Pose2d(5.0, 13.5, Rotation2d()),
+            robot := Pose2d(5.0, 13.5, Rotation2d()),
         )
         self.field = Field2d()
+        self.field.setRobotPose(robot)
         dash = Shuffleboard.getTab("LiveWindow")
         dash.add("field", self.field)
-        dash.add("gyro", gyro.getAngle())
+        
 
         self.update()
         self.vision_timer.start()
@@ -68,6 +78,7 @@ class Odometry(Subsystem):
             self.update()
             return
         if self.vision_timer.advanceIfElapsed(1):
+            info(self.gyro.getRotation2d().degrees())
             estimated_pose = self.vision.estimate_pose()
             if estimated_pose:  # * if we have a pose estimation from photonvision...
                 pose = estimated_pose.toPose2d()
