@@ -15,7 +15,7 @@ class Ghost(TimedCommandRobot):
 
         # * allows the robot to remember + the dashboard to configure whether or not autonomous should run
         Preferences.initBoolean("auto_active", False)
-        if type(self.subsystems.gyro) != DummyGyro:
+        if not isinstance(self.subsystems.gyro, DummyGyro):
             Shuffleboard.getTab("LiveWindow").add("gyro", self.subsystems.gyro)
 
     def teleopInit(self):

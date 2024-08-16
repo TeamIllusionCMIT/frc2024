@@ -1,3 +1,4 @@
+from typing import Any
 from commands2.subsystem import Subsystem
 from wpimath.kinematics import (
     MecanumDriveKinematics,
@@ -18,7 +19,8 @@ from logging import basicConfig, DEBUG, info as linfo
 
 basicConfig(level=DEBUG)
 
-def info(message: str):
+
+def info(message: Any):
     if (not DriverStation.isDSAttached()) or DriverStation.isFMSAttached():
         # * don't run if there's no driver station/we're in competition
         return
@@ -61,7 +63,6 @@ class Odometry(Subsystem):
         self.field.setRobotPose(robot)
         dash = Shuffleboard.getTab("LiveWindow")
         dash.add("field", self.field)
-        
 
         self.update()
         self.vision_timer.start()

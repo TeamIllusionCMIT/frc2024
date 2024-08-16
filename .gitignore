@@ -4,3 +4,4 @@ __pycache__
 .vscode
 networktables.json
 networktables.json.bck
+frc2024.egg-info/**
